@@ -1,11 +1,16 @@
 use crate::params::{PUBLICKEYBYTES, SECRETKEYBYTES, SIGNBYTES};
 use crate::sign::*;
 
-#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+use serde::{Serialize, Deserialize};
+use serde_big_array::BigArray;
+
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Keypair
 {
+  #[serde(with = "BigArray")]
   pub public: [u8; PUBLICKEYBYTES],
-  secret: [u8; SECRETKEYBYTES],
+  #[serde(with = "BigArray")]
+  pub secret: [u8; SECRETKEYBYTES],
 }
 
 /// Secret key elided
