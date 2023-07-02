@@ -9,7 +9,7 @@ pub type DilithiumSecretKey = [u8; SECRETKEYBYTES];
 pub type DilithiumSignature = [u8; SIGNBYTES];
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub struct Keypair
+pub struct DilithiumKeypair
 {
   #[serde(with = "BigArray")]
   pub public: DilithiumPublicKey,
@@ -18,7 +18,7 @@ pub struct Keypair
 }
 
 /// Secret key elided
-impl std::fmt::Debug for Keypair
+impl std::fmt::Debug for DilithiumKeypair
 {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
   {
@@ -32,12 +32,12 @@ pub enum SignError
   Verify,
 }
 
-impl Keypair
+impl DilithiumKeypair
 {
   /// Explicitly expose secret key
   /// ```
   /// # use pqc_dilithium::*;
-  /// let keys = Keypair::generate();
+  /// let keys = DilithiumKeypair::generate();
   /// let secret_key = keys.expose_secret();
   /// assert!(secret_key.len() == SECRETKEYBYTES);
   /// ```
@@ -51,16 +51,16 @@ impl Keypair
   /// Example:
   /// ```
   /// # use pqc_dilithium::*;
-  /// let keys = Keypair::generate();
+  /// let keys = DilithiumKeypair::generate();
   /// assert!(keys.public.len() == PUBLICKEYBYTES);
   /// assert!(keys.expose_secret().len() == SECRETKEYBYTES);
   /// ```
-  pub fn generate() -> Keypair
+  pub fn generate() -> DilithiumKeypair
   {
     let mut public = [0u8; PUBLICKEYBYTES];
     let mut secret = [0u8; SECRETKEYBYTES];
     crypto_sign_keypair(&mut public, &mut secret, None);
-    Keypair { public, secret }
+    DilithiumKeypair { public, secret }
   }
 
   /// Generates a signature for the given message using a keypair
@@ -68,7 +68,7 @@ impl Keypair
   /// Example:
   /// ```
   /// # use pqc_dilithium::*;
-  /// # let keys = Keypair::generate();
+  /// # let keys = DilithiumKeypair::generate();
   /// let msg = "Hello".as_bytes();
   /// let sig = keys.sign(&msg);
   /// assert!(sig.len() == SIGNBYTES);
@@ -86,7 +86,7 @@ impl Keypair
 /// Example:
 /// ```
 /// # use pqc_dilithium::*;
-/// # let keys = Keypair::generate();
+/// # let keys = DilithiumKeypair::generate();
 /// # let msg = [0u8; 32];
 /// # let sig = keys.sign(&msg);
 /// let sig_verify = verify(&sig, &msg, &keys.public);
