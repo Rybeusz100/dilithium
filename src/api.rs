@@ -4,17 +4,17 @@ use crate::sign::*;
 use serde::{Serialize, Deserialize};
 use serde_big_array::BigArray;
 
-pub type PublicKey = [u8; PUBLICKEYBYTES];
-pub type SecretKey = [u8; SECRETKEYBYTES];
-pub type Signature = [u8; SIGNBYTES];
+pub type DilithiumPublicKey = [u8; PUBLICKEYBYTES];
+pub type DilithiumSecretKey = [u8; SECRETKEYBYTES];
+pub type DilithiumSignature = [u8; SIGNBYTES];
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Keypair
 {
   #[serde(with = "BigArray")]
-  pub public: PublicKey,
+  pub public: DilithiumPublicKey,
   #[serde(with = "BigArray")]
-  pub secret: SecretKey,
+  pub secret: DilithiumSecretKey,
 }
 
 /// Secret key elided
@@ -73,7 +73,7 @@ impl Keypair
   /// let sig = keys.sign(&msg);
   /// assert!(sig.len() == SIGNBYTES);
   /// ```  
-  pub fn sign(&self, msg: &[u8]) -> Signature
+  pub fn sign(&self, msg: &[u8]) -> DilithiumSignature
   {
     let mut sig = [0u8; SIGNBYTES];
     crypto_sign_signature(&mut sig, msg, &self.secret);
